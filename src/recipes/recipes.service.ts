@@ -75,7 +75,7 @@ export class RecipesService {
      * @returns ReadRecipeDto[] - an array of mapped DTOs
      */
     async findAll(userId: string): Promise<ReadRecipeDto[]> {
-        const recipes = await this.recipeModel.find({_userId: userId});
+        const recipes = await this.recipeModel.find({userId: userId});
         return await this.classMapper.mapArrayAsync(recipes, Recipe, ReadRecipeDto);
     }
 
