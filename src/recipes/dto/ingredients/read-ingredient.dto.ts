@@ -1,14 +1,12 @@
-import { AutoMap } from "@automapper/classes";
+import { AutoMap } from '@automapper/classes';
 
 export class ReadIngredientDto {
+  @AutoMap()
+  id: string;
 
-    @AutoMap()
-    id: string;
+  @AutoMap()
+  title: string;
 
-    @AutoMap()
-    title: string;
-
-    @AutoMap()
-    description: string;
-
+  @AutoMap()
+  description: string;
 }

@@ -1,12 +1,12 @@
-import { AutoMap } from "@automapper/classes";
+import { AutoMap } from '@automapper/classes';
 
 export class ReadUserDto {
-    @AutoMap()
-    email: string;
+  @AutoMap()
+  email: string;
 
-    @AutoMap()
-    firstName: string;
+  @AutoMap()
+  firstName: string;
 
-    @AutoMap()
-    lastName: string;
+  @AutoMap()
+  lastName: string;
 }
