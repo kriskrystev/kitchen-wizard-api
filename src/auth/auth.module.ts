@@ -3,6 +3,7 @@ import { JwtModule } from '@nestjs/jwt';
 import { PassportModule } from '@nestjs/passport';
 import { JWT_CONSTANTS } from '../constants';
 import { UsersModule } from '../users/users.module';
+import { AuthenticationController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { JwtStrategy } from './strategy/jwt.strategy';
 import { LocalStrategy } from './strategy/local.strategy';
@@ -14,10 +15,11 @@ import { LocalStrategy } from './strategy/local.strategy';
     JwtModule.register({
       secret: JWT_CONSTANTS.secret,
       signOptions: {
-        expiresIn: '15min'
+        expiresIn: '20000min' // this is only temporary
       }
     })
   ],
+  controllers: [AuthenticationController],
   providers: [AuthService, LocalStrategy, JwtStrategy],
   exports: [AuthService]
 })

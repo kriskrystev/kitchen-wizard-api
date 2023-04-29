@@ -1,8 +1,16 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
-import { UsersService } from './users.service';
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Request,
+  UseGuards
+} from '@nestjs/common';
+import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { MailService } from '../mail/mail.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ReadUserDto } from './dto/read-user.dto';
-import { MailService } from '../mail/mail.service';
+import { UsersService } from './users.service';
 
 @Controller('users')
 export class UsersController {
@@ -14,7 +22,8 @@ export class UsersController {
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<ReadUserDto> {
     const user = await this.usersService.create(createUserDto);
-    await this.mailService.sendGreetingEmail(user.email);
+    // fix this
+    // await this.mailService.sendGreetingEmail(user.email);
 
     return user;
   }
@@ -22,5 +31,11 @@ export class UsersController {
   @Get()
   async getAll() {
     return await this.usersService.findAll();
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Get('profile')
+  getProfile(@Request() req) {
+    return this.usersService.findUserProfile(req.user.email);
   }
 }

@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { UsersService } from '../users/users.service';
 import { comparePasswords } from '../utils/bcrypt';
-import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
 export class AuthService {
@@ -10,6 +10,7 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
+  // TODO: fix the promise return type
   async validateUser(username: string, pass: string): Promise<any> {
     const user = await this.usersService.findUserByEmail(username);
     if (!user) {
@@ -26,6 +27,7 @@ export class AuthService {
     return null;
   }
 
+  // TODO: fix this any and define a return type
   async login(user: any) {
     const payload = { email: user.email, sub: user.id };
     return {
