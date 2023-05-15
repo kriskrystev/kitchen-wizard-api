@@ -90,10 +90,7 @@ export class UsersService {
     const findQuery = this.userModel
       .find(query)
       .sort({ _id: 1 })
-      .skip(documentsToSkip)
-      .populate('email')
-      .populate('firstName')
-      .populate('lastName');
+      .skip(documentsToSkip);
 
     if (limitOfDocuments) {
       findQuery.limit(limitOfDocuments);

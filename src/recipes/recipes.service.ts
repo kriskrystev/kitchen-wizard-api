@@ -1,21 +1,21 @@
-import { Injectable } from '@nestjs/common';
-import { CreateRecipeDto } from './dto/recipes/create-recipe.dto';
-import { UpdateRecipeDto } from './dto/recipes/update-recipe.dto';
-import { InjectModel } from '@nestjs/mongoose';
-import { Recipe, RecipeDocument } from './schema/recipe.schema';
-import mongoose, { Model } from 'mongoose';
-import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
-import { RecipeConflictException } from './exceptions/recipe-conflict.exception';
-import { ReadRecipeDto } from './dto/recipes/read-recipe.dto';
-import { RecipeNotFoundException } from './exceptions/recipe-not-found.exception';
+import { InjectMapper } from '@automapper/nestjs';
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import mongoose, { FilterQuery, Model } from 'mongoose';
+import { UserDocument } from '../users/schema/user.schema';
+import { UsersService } from '../users/users.service';
 import { CreateIngredientDto } from './dto/ingredients/create-ingredient.dto';
 import { ReadIngredientDto } from './dto/ingredients/read-ingredient.dto';
-import { Ingredient } from './schema/ingredient.schema';
-import { IngredientNotFoundException } from './exceptions/ingredient-not-found.exception';
 import { UpdateIngredientDto } from './dto/ingredients/update-ingredient.dto';
-import { UsersService } from '../users/users.service';
-import { UserDocument } from '../users/schema/user.schema';
+import { CreateRecipeDto } from './dto/recipes/create-recipe.dto';
+import { ReadRecipeDto } from './dto/recipes/read-recipe.dto';
+import { UpdateRecipeDto } from './dto/recipes/update-recipe.dto';
+import { IngredientNotFoundException } from './exceptions/ingredient-not-found.exception';
+import { RecipeConflictException } from './exceptions/recipe-conflict.exception';
+import { RecipeNotFoundException } from './exceptions/recipe-not-found.exception';
+import { Ingredient } from './schema/ingredient.schema';
+import { Recipe, RecipeDocument } from './schema/recipe.schema';
 
 @Injectable()
 export class RecipesService {
@@ -78,9 +78,34 @@ export class RecipesService {
    * Get all the recipes for a user and map them to an array of ReadRecipeDtos
    * @returns ReadRecipeDto[] - an array of mapped DTOs
    */
-  async findAll(userId: string): Promise<ReadRecipeDto[]> {
-    const recipes = await this.recipeModel.find({ userId: userId });
-    return await this.classMapper.mapArrayAsync(recipes, Recipe, ReadRecipeDto);
+  async findAll(
+    userId: string,
+    documentsToSkip = 0,
+    limitOfDocuments?: number,
+    startId?: string
+  ): Promise<any> {
+    const query: FilterQuery<RecipeDocument> = { _userId: userId };
+
+    if (startId) {
+      query._id = { $gt: startId };
+    }
+
+    const findQuery = this.recipeModel
+      .find(query)
+      .sort({ _id: 1 })
+      .skip(documentsToSkip);
+
+    if (limitOfDocuments) {
+      findQuery.limit(limitOfDocuments);
+    }
+
+    const results = await findQuery;
+    const count = await this.recipeModel.count();
+
+    return {
+      results: this.classMapper.mapArray(results, Recipe, ReadRecipeDto),
+      count
+    };
   }
 
   /**

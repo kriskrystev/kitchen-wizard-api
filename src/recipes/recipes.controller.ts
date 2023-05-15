@@ -6,11 +6,13 @@ import {
   Param,
   Patch,
   Post,
+  Query,
   Request,
   UseGuards
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ValidMongoID } from '../utils/decorators/mongo-id-validation-decorator';
+import { PaginationParams } from '../utils/pagination/pagination-params';
 import { CreateIngredientDto } from './dto/ingredients/create-ingredient.dto';
 import { UpdateIngredientDto } from './dto/ingredients/update-ingredient.dto';
 import { CreateRecipeDto } from './dto/recipes/create-recipe.dto';
@@ -28,8 +30,8 @@ export class RecipesController {
   }
 
   @Get()
-  findAll(@Request() req) {
-    return this.recipesService.findAll(req.user.userId);
+  findAll(@Request() req, @Query() { skip, limit, startId }: PaginationParams) {
+    return this.recipesService.findAll(req.user.userId, skip, limit, startId);
   }
 
   @Get(':id')
