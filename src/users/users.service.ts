@@ -1,14 +1,14 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { InjectModel } from '@nestjs/mongoose';
-import { User, UserDocument } from './schema/user.schema';
-import { Model } from 'mongoose';
-import { EmailConflictException } from './exceptions/email-conflict.exception';
-import { encodePassword } from '../utils/bcrypt';
-import { InjectMapper } from '@automapper/nestjs';
 import { Mapper } from '@automapper/core';
+import { InjectMapper } from '@automapper/nestjs';
+import { Injectable } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { FilterQuery, Model } from 'mongoose';
+import { encodePassword } from '../utils/bcrypt';
+import { CreateUserDto } from './dto/create-user.dto';
 import { ReadUserDto } from './dto/read-user.dto';
+import { EmailConflictException } from './exceptions/email-conflict.exception';
 import { UserNotFoundException } from './exceptions/user-not-found.exception';
+import { User, UserDocument } from './schema/user.schema';
 
 @Injectable()
 export class UsersService {
@@ -76,11 +76,35 @@ export class UsersService {
   /**
    * Gets all the User documents
    */
-  async findAll(): Promise<ReadUserDto[]> {
-    return await this.classMapper.mapArrayAsync(
-      await this.userModel.find(),
-      User,
-      ReadUserDto
-    );
+  async findAll(
+    documentsToSkip = 0,
+    limitOfDocuments?: number,
+    startId?: string
+  ): Promise<any> {
+    const query: FilterQuery<UserDocument> = {};
+
+    if (startId) {
+      query._id = { $gt: startId };
+    }
+
+    const findQuery = this.userModel
+      .find(query)
+      .sort({ _id: 1 })
+      .skip(documentsToSkip)
+      .populate('email')
+      .populate('firstName')
+      .populate('lastName');
+
+    if (limitOfDocuments) {
+      findQuery.limit(limitOfDocuments);
+    }
+
+    const results = await findQuery;
+    const count = await this.userModel.count();
+
+    return {
+      results: this.classMapper.mapArray(results, User, ReadUserDto),
+      count
+    };
   }
 }
