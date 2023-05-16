@@ -1,7 +1,6 @@
 import { AutoMap } from '@automapper/classes';
-import { RecipeType } from '../../enums/recipe-type.enum';
-import { ReadIngredientDto } from '../ingredients/read-ingredient.dto';
-import { CreateIngredientDto } from '../ingredients/create-ingredient.dto';
+import { ReadIngredientDto } from '../../ingredients/dto/read-ingredient.dto';
+import { RecipeType } from '../enums/recipe-type.enum';
 
 export class ReadRecipeDto {
   @AutoMap()
@@ -19,12 +18,12 @@ export class ReadRecipeDto {
   @AutoMap()
   type: RecipeType;
 
-  @AutoMap(() => ReadIngredientDto)
-  ingredients: CreateIngredientDto[];
-
   @AutoMap()
   time: Date;
 
   @AutoMap()
   price: number;
+
+  @AutoMap(() => [ReadIngredientDto])
+  ingredients: ReadIngredientDto[];
 }
