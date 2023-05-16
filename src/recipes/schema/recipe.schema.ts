@@ -1,12 +1,9 @@
-import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { AutoMap } from '@automapper/classes';
+import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
+import { Type } from 'class-transformer';
+import mongoose, { Document, HydratedDocument } from 'mongoose';
+import { Ingredient } from '../../ingredients/schema/ingredient.schema';
 import { RecipeType } from '../enums/recipe-type.enum';
-import {
-  Ingredient,
-  IngredientDocument,
-  IngredientSchema
-} from './ingredient.schema';
-import { Document, HydratedDocument, Types } from 'mongoose';
 
 export type RecipeDocument = HydratedDocument<Recipe>;
 
@@ -27,10 +24,6 @@ export class Recipe extends Document {
   @AutoMap()
   type: RecipeType;
 
-  @Prop({ type: [IngredientSchema], required: true })
-  @AutoMap(() => Ingredient)
-  ingredients: Types.DocumentArray<IngredientDocument>;
-
   @Prop({ required: true })
   @AutoMap()
   time: Date;
@@ -42,6 +35,13 @@ export class Recipe extends Document {
   @AutoMap()
   @Prop()
   userId: string;
+
+  @Prop({
+    type: [{ type: mongoose.Schema.Types.ObjectId, ref: Ingredient.name }]
+  })
+  @Type(() => Ingredient)
+  @AutoMap(() => [Ingredient])
+  ingredients: Ingredient[];
 }
 
 export const RecipeSchema = SchemaFactory.createForClass(Recipe);
