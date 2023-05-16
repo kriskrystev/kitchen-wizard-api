@@ -6,6 +6,7 @@ import { MongooseModule } from '@nestjs/mongoose';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { AuthModule } from './auth/auth.module';
+import { IngredientsModule } from './ingredients/ingredients.module';
 import { MailModule } from './mail/mail.module';
 import { RecipesModule } from './recipes/recipes.module';
 import { UsersModule } from './users/users.module';
@@ -24,8 +25,11 @@ import { UsersModule } from './users/users.module';
 
     UsersModule,
     RecipesModule,
+    IngredientsModule,
 
-    AuthModule
+    AuthModule,
+
+    IngredientsModule
   ],
   controllers: [AppController],
   providers: [AppService, ConfigService]
