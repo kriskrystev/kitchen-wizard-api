@@ -4,12 +4,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectModel } from '@nestjs/mongoose';
 import { FilterQuery, Model } from 'mongoose';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
+import { ReadIngredientDto } from './dto/read-ingredient.dto';
 import { UpdateIngredientDto } from './dto/update-ingredient.dto';
 import { IngredientAlreadyExistsException } from './exceptions/ingredient-already-exists.exception';
 import { IngredientNotFoundException } from './exceptions/ingredient-not-found.exception';
 import { Ingredient, IngredientDocument } from './schema/ingredient.schema';
 
-// TODO: automap return types
 @Injectable()
 export class IngredientsService {
   constructor(
@@ -18,7 +18,9 @@ export class IngredientsService {
     @InjectMapper() private readonly classMapper: Mapper
   ) {}
 
-  async create(createIngredientDto: CreateIngredientDto) {
+  async create(
+    createIngredientDto: CreateIngredientDto
+  ): Promise<ReadIngredientDto> {
     const { title } = createIngredientDto;
 
     const existingIngredient = await this.ingredientModel
@@ -29,7 +31,9 @@ export class IngredientsService {
     }
 
     const createdIngredient = new this.ingredientModel(createIngredientDto);
-    return createdIngredient.save();
+    const savedIngredient = await createdIngredient.save();
+
+    return this.classMapper.map(savedIngredient, Ingredient, ReadIngredientDto);
   }
 
   async findAll(
@@ -37,7 +41,7 @@ export class IngredientsService {
     documentsToSkip = 0,
     limitOfDocuments?: number,
     startId?: string
-  ) {
+  ): Promise<{ results: ReadIngredientDto[]; count: number }> {
     const query: FilterQuery<IngredientDocument> = { _userId: userId };
 
     if (startId) {
@@ -56,35 +60,54 @@ export class IngredientsService {
     const results = await findQuery;
     const count = await this.ingredientModel.count();
 
-    return { results, count };
+    return {
+      results: this.classMapper.mapArray(
+        results,
+        Ingredient,
+        ReadIngredientDto
+      ),
+      count
+    };
   }
 
-  async findOne(id: string) {
+  async findOne(id: string): Promise<ReadIngredientDto> {
     const ingredient = await this.ingredientModel.findById(id).exec();
     if (!ingredient) {
       throw new IngredientNotFoundException(id);
     }
-    return ingredient;
+    return this.classMapper.map(ingredient, Ingredient, ReadIngredientDto);
   }
 
-  async update(id: string, updateIngredientDto: UpdateIngredientDto) {
-    const existingIngredient = await this.ingredientModel.findById(id).exec();
-    if (!existingIngredient) {
+  async update(
+    id: string,
+    updateIngredientDto: UpdateIngredientDto
+  ): Promise<ReadIngredientDto> {
+    const updatedIngredient = await this.ingredientModel
+      .findByIdAndUpdate(id, updateIngredientDto, { new: true })
+      .exec();
+
+    if (!updatedIngredient) {
       throw new IngredientNotFoundException(id);
     }
 
-    return this.ingredientModel
-      .findByIdAndUpdate(id, updateIngredientDto, { new: true })
-      .exec();
+    return this.classMapper.map(
+      updatedIngredient,
+      Ingredient,
+      ReadIngredientDto
+    );
   }
 
-  async remove(id: string) {
+  async remove(id: string): Promise<ReadIngredientDto> {
     const removedIngredient = await this.ingredientModel
       .findByIdAndRemove(id)
       .exec();
     if (!removedIngredient) {
       throw new IngredientNotFoundException(id);
     }
-    return removedIngredient;
+    return this.classMapper.map(
+      removedIngredient,
+      Ingredient,
+      ReadIngredientDto
+    );
   }
 }
