@@ -49,46 +49,4 @@ export class RecipesController {
   remove(@Param('id') @ValidMongoID() id: string) {
     return this.recipesService.remove(id);
   }
-
-  // @Post(':recipeId/ingredients')
-  // createIngredient(
-  //   @Param('recipeId') @ValidMongoID('recipeId') recipeId: string,
-  //   @Body() createIngredientDto: CreateIngredientDto
-  // ) {
-  //   return this.recipesService.createIngredient(recipeId, createIngredientDto);
-  // }
-
-  // @Get(':id/ingredients')
-  // findIngredients(@Param('id') @ValidMongoID() id: string) {
-  //   return this.recipesService.findIngredients(id);
-  // }
-
-  // @Get(':recipeId/ingredients/:ingredientId')
-  // findIngredient(
-  //   @Param('recipeId') @ValidMongoID('recipeId') recipeId: string,
-  //   @Param('ingredientId') @ValidMongoID('ingredientId') ingredientId: string
-  // ) {
-  //   return this.recipesService.findIngredientById(recipeId, ingredientId);
-  // }
-
-  // @Delete(':recipeId/ingredients/:ingredientId')
-  // deleteIngredient(
-  //   @Param('recipeId') @ValidMongoID('recipeId') recipeId: string,
-  //   @Param('ingredientId') @ValidMongoID('ingredientId') ingredientId: string
-  // ) {
-  //   return this.recipesService.removeIngredient(recipeId, ingredientId);
-  // }
-
-  // @Patch(':recipeId/ingredients/:ingredientId')
-  // updateIngredient(
-  //   @Param('recipeId') @ValidMongoID('recipeId') recipeId: string,
-  //   @Param('ingredientId') @ValidMongoID('ingredientId') ingredientId: string,
-  //   @Body() updateIngredientDto: UpdateIngredientDto
-  // ) {
-  //   return this.recipesService.updateIngredient(
-  //     recipeId,
-  //     ingredientId,
-  //     updateIngredientDto
-  //   );
-  // }
 }
