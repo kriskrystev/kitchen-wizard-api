@@ -17,7 +17,10 @@ export class RecipesService {
     @InjectMapper() private readonly classMapper: Mapper
   ) {}
 
-  async create(createRecipeDto: CreateRecipeDto, userId: string): Promise<any> {
+  async create(
+    createRecipeDto: CreateRecipeDto,
+    userId: string
+  ): Promise<ReadRecipeDto> {
     const recipeExists = await this.recipeModel.findOne({
       title: createRecipeDto.title
     });
@@ -34,7 +37,9 @@ export class RecipesService {
     recipeEntity.userId = userId;
     recipeEntity.time = new Date();
 
-    return await recipeEntity.save();
+    const savedEntity = await recipeEntity.save();
+
+    return this.classMapper.map(savedEntity, Recipe, ReadRecipeDto);
   }
 
   async findOne(id: string): Promise<ReadRecipeDto> {
@@ -44,16 +49,15 @@ export class RecipesService {
       throw new RecipeNotFoundException();
     }
 
-    return await this.classMapper.mapAsync(recipe, Recipe, ReadRecipeDto);
+    return this.classMapper.map(recipe, Recipe, ReadRecipeDto);
   }
 
-  // TODO: fix any
   async findAll(
     userId: string,
     documentsToSkip = 0,
     limitOfDocuments?: number,
     startId?: string
-  ): Promise<any> {
+  ): Promise<{ results: ReadRecipeDto[]; count: number }> {
     const query: FilterQuery<RecipeDocument> = { _userId: userId };
 
     if (startId) {
@@ -91,7 +95,7 @@ export class RecipesService {
       throw new RecipeNotFoundException();
     }
 
-    return await this.classMapper.mapAsync(recipeEntity, Recipe, ReadRecipeDto);
+    return this.classMapper.map(recipeEntity, Recipe, ReadRecipeDto);
   }
 
   async remove(id: string): Promise<ReadRecipeDto> {
@@ -101,7 +105,7 @@ export class RecipesService {
       throw new RecipeNotFoundException();
     }
 
-    return await this.classMapper.mapAsync(recipeEntity, Recipe, ReadRecipeDto);
+    return this.classMapper.map(recipeEntity, Recipe, ReadRecipeDto);
   }
 
   // /**
