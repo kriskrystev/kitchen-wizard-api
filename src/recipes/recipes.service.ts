@@ -94,21 +94,15 @@ export class RecipesService {
     return await this.classMapper.mapAsync(recipeEntity, Recipe, ReadRecipeDto);
   }
 
-  // /**
-  //  * Removes a recipe from the database by making use of the findByIdAndRemove mongoose method
-  //  * @param id - The id of the recipe
-  //  * @throws {RecipeNotFoundException}
-  //  * @returns ReadRecipeDto - The same DTO that we just deleted.
-  //  */
-  // async remove(id: string): Promise<ReadRecipeDto> {
-  //   const recipeEntity = await this.recipeModel.findByIdAndRemove(id);
+  async remove(id: string): Promise<ReadRecipeDto> {
+    const recipeEntity = await this.recipeModel.findByIdAndRemove(id);
 
-  //   if (!recipeEntity) {
-  //     throw new RecipeNotFoundException();
-  //   }
+    if (!recipeEntity) {
+      throw new RecipeNotFoundException();
+    }
 
-  //   return await this.classMapper.mapAsync(recipeEntity, Recipe, ReadRecipeDto);
-  // }
+    return await this.classMapper.mapAsync(recipeEntity, Recipe, ReadRecipeDto);
+  }
 
   // /**
   //  * Adds a new ingredient to an existing recipe.

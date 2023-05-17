@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -44,10 +45,10 @@ export class RecipesController {
     return this.recipesService.update(id, updateRecipeDto);
   }
 
-  // @Delete(':id')
-  // remove(@Param('id') @ValidMongoID() id: string) {
-  //   return this.recipesService.remove(id);
-  // }
+  @Delete(':id')
+  remove(@Param('id') @ValidMongoID() id: string) {
+    return this.recipesService.remove(id);
+  }
 
   // @Post(':recipeId/ingredients')
   // createIngredient(
