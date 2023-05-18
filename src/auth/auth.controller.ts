@@ -1,8 +1,10 @@
 import { Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
 import { RequestWithUser } from '../utils/request-with-user';
 import { AuthService } from './auth.service';
 import { LocalAuthGuard } from './guards/local-auth.guard';
 
+@ApiTags('authentication')
 @Controller('auth')
 export class AuthenticationController {
   constructor(private authService: AuthService) {}
