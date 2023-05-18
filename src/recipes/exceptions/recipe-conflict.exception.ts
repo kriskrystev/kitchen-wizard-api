@@ -1,7 +1,7 @@
-import { ConflictException } from "@nestjs/common";
+import { ConflictException } from '@nestjs/common';
 
 export class RecipeConflictException extends ConflictException {
-    constructor() {
-        super("Recipe with that name already exists");
-    }
+  constructor() {
+    super('Recipe with that name already exists');
+  }
 }

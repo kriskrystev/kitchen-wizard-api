@@ -1,7 +1,7 @@
 export enum RecipeType {
-    Breakfast,
-    Lunch,
-    Dinner,
-    Desert,
-    Salad
+  Breakfast,
+  Lunch,
+  Dinner,
+  Desert,
+  Salad
 }

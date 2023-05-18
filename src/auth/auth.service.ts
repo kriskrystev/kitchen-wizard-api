@@ -1,35 +1,38 @@
-import { Injectable } from "@nestjs/common";
-import { UsersService } from "../users/users.service";
-import { comparePasswords } from "../utils/bcrypt";
-import { JwtService } from "@nestjs/jwt";
+import { Injectable } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
+import { User } from '../users/schema/user.schema';
+import { UsersService } from '../users/users.service';
+import { comparePasswords } from '../utils/bcrypt';
+import { JwtLoginResponse } from './models/jwt-login-response';
+import { JwtSignaturePayload } from './models/jwt-signature-payload';
 
 @Injectable()
 export class AuthService {
-    constructor(
-        private usersService: UsersService,
-        private jwtService: JwtService) {
+  constructor(
+    private usersService: UsersService,
+    private jwtService: JwtService
+  ) {}
+
+  async validateUser(username: string, pass: string): Promise<User> {
+    const user = await this.usersService.findUserByEmail(username);
+    if (!user) {
+      return null;
     }
 
-    async validateUser(username: string, pass: string): Promise<any> {
-        const user = await this.usersService.findUserByEmail(username);
-        if (!user) {
-            return null;
-        }
+    const passwordsMatch = comparePasswords(user.password, pass);
 
-        const passwordsMatch = comparePasswords(user.password, pass);
+    if (user && passwordsMatch) {
+      delete user.password;
 
-        if (user && passwordsMatch) {
-            delete user.password;
-
-            return user;
-        }
-        return null;
+      return user;
     }
+    return null;
+  }
 
-    async login(user: any) {
-        const payload = { email: user.email, sub: user.id };
-        return {
-            accessToken: this.jwtService.sign(payload)
-        };
-    }
+  login(user: any): JwtLoginResponse {
+    const payload: JwtSignaturePayload = { email: user.email, sub: user.id };
+    return {
+      accessToken: this.jwtService.sign(payload)
+    };
+  }
 }
