@@ -7,6 +7,7 @@ import {
   Req,
   UseGuards
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { MailService } from '../mail/mail.service';
 import { PaginationParams } from '../utils/pagination/pagination-params';
@@ -15,6 +16,7 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { ReadUserDto } from './dto/read-user.dto';
 import { UsersService } from './users.service';
 
+@ApiTags('users')
 @Controller('users')
 export class UsersController {
   constructor(
@@ -37,6 +39,7 @@ export class UsersController {
   }
 
   @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
   @Get('profile')
   getProfile(@Req() req: RequestWithUser) {
     return this.usersService.findUserProfile(req.user.email);

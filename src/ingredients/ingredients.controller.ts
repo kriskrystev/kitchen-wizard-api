@@ -10,6 +10,7 @@ import {
   Req,
   UseGuards
 } from '@nestjs/common';
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ValidMongoID } from '../utils/decorators/mongo-id-validation-decorator';
 import { PaginationParams } from '../utils/pagination/pagination-params';
@@ -18,6 +19,8 @@ import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { UpdateIngredientDto } from './dto/update-ingredient.dto';
 import { IngredientsService } from './ingredients.service';
 
+@ApiTags('ingredients')
+@ApiBearerAuth()
 @UseGuards(JwtAuthGuard)
 @Controller('ingredients')
 export class IngredientsController {
