@@ -9,7 +9,7 @@ export class CreateIngredientDto {
   title: string;
 
   @AutoMap()
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @Allow()
   description: string;
 }
