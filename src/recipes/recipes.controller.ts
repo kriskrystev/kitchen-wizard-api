@@ -7,12 +7,13 @@ import {
   Patch,
   Post,
   Query,
-  Request,
+  Req,
   UseGuards
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ValidMongoID } from '../utils/decorators/mongo-id-validation-decorator';
 import { PaginationParams } from '../utils/pagination/pagination-params';
+import { RequestWithUser } from '../utils/request-with-user';
 import { CreateRecipeDto } from './dto/create-recipe.dto';
 import { UpdateRecipeDto } from './dto/update-recipe.dto';
 import { RecipesService } from './recipes.service';
@@ -23,12 +24,18 @@ export class RecipesController {
   constructor(private readonly recipesService: RecipesService) {}
 
   @Post()
-  create(@Body() createRecipeDto: CreateRecipeDto, @Request() request) {
+  create(
+    @Body() createRecipeDto: CreateRecipeDto,
+    @Req() request: RequestWithUser
+  ) {
     return this.recipesService.create(createRecipeDto, request.user.userId);
   }
 
   @Get()
-  findAll(@Request() req, @Query() { skip, limit, startId }: PaginationParams) {
+  findAll(
+    @Req() req: RequestWithUser,
+    @Query() { skip, limit, startId }: PaginationParams
+  ) {
     return this.recipesService.findAll(req.user.userId, skip, limit, startId);
   }
 

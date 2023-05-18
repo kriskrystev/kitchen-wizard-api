@@ -7,12 +7,13 @@ import {
   Patch,
   Post,
   Query,
-  Request,
+  Req,
   UseGuards
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ValidMongoID } from '../utils/decorators/mongo-id-validation-decorator';
 import { PaginationParams } from '../utils/pagination/pagination-params';
+import { RequestWithUser } from '../utils/request-with-user';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
 import { UpdateIngredientDto } from './dto/update-ingredient.dto';
 import { IngredientsService } from './ingredients.service';
@@ -29,7 +30,7 @@ export class IngredientsController {
 
   @Get()
   findAll(
-    @Request() request,
+    @Req() request: RequestWithUser,
     @Query() { skip, limit, startId }: PaginationParams
   ) {
     return this.ingredientsService.findAll(

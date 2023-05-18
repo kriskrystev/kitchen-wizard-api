@@ -4,12 +4,13 @@ import {
   Get,
   Post,
   Query,
-  Request,
+  Req,
   UseGuards
 } from '@nestjs/common';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { MailService } from '../mail/mail.service';
 import { PaginationParams } from '../utils/pagination/pagination-params';
+import { RequestWithUser } from '../utils/request-with-user';
 import { CreateUserDto } from './dto/create-user.dto';
 import { ReadUserDto } from './dto/read-user.dto';
 import { UsersService } from './users.service';
@@ -37,7 +38,7 @@ export class UsersController {
 
   @UseGuards(JwtAuthGuard)
   @Get('profile')
-  getProfile(@Request() req) {
+  getProfile(@Req() req: RequestWithUser) {
     return this.usersService.findUserProfile(req.user.email);
   }
 }
