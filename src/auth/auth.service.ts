@@ -1,7 +1,10 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { User } from '../users/schema/user.schema';
 import { UsersService } from '../users/users.service';
 import { comparePasswords } from '../utils/bcrypt';
+import { JwtLoginResponse } from './models/jwt-login-response';
+import { JwtSignaturePayload } from './models/jwt-signature-payload';
 
 @Injectable()
 export class AuthService {
@@ -10,8 +13,7 @@ export class AuthService {
     private jwtService: JwtService
   ) {}
 
-  // TODO: fix the promise return type
-  async validateUser(username: string, pass: string): Promise<any> {
+  async validateUser(username: string, pass: string): Promise<User> {
     const user = await this.usersService.findUserByEmail(username);
     if (!user) {
       return null;
@@ -27,9 +29,8 @@ export class AuthService {
     return null;
   }
 
-  // TODO: fix this any and define a return type
-  async login(user: any) {
-    const payload = { email: user.email, sub: user.id };
+  login(user: any): JwtLoginResponse {
+    const payload: JwtSignaturePayload = { email: user.email, sub: user.id };
     return {
       accessToken: this.jwtService.sign(payload)
     };
