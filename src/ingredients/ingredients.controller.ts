@@ -1,4 +1,6 @@
+import { ApiException } from '@nanogiants/nestjs-swagger-api-exception-decorator';
 import {
+  BadRequestException,
   Body,
   Controller,
   Delete,
@@ -8,15 +10,24 @@ import {
   Post,
   Query,
   Req,
+  UnauthorizedException,
   UseGuards
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiTags
+} from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 import { ValidMongoID } from '../utils/decorators/mongo-id-validation-decorator';
 import { PaginationParams } from '../utils/pagination/pagination-params';
 import { RequestWithUser } from '../utils/request-with-user';
 import { CreateIngredientDto } from './dto/create-ingredient.dto';
+import { ReadIngredientDto } from './dto/read-ingredient.dto';
 import { UpdateIngredientDto } from './dto/update-ingredient.dto';
+import { IngredientAlreadyExistsException } from './exceptions/ingredient-already-exists.exception';
+import { IngredientNotFoundException } from './exceptions/ingredient-not-found.exception';
 import { IngredientsService } from './ingredients.service';
 
 @ApiTags('ingredients')
@@ -27,10 +38,21 @@ export class IngredientsController {
   constructor(private readonly ingredientsService: IngredientsService) {}
 
   @Post()
+  @ApiCreatedResponse({
+    type: ReadIngredientDto,
+    description: 'The record is created'
+  })
+  @ApiException(() => [
+    IngredientAlreadyExistsException,
+    BadRequestException,
+    UnauthorizedException
+  ])
   create(@Body() createIngredientDto: CreateIngredientDto) {
     return this.ingredientsService.create(createIngredientDto);
   }
 
+  @ApiOkResponse({ description: 'Everything went ok.' })
+  @ApiException(() => [BadRequestException, UnauthorizedException])
   @Get()
   findAll(
     @Req() request: RequestWithUser,
@@ -44,11 +66,23 @@ export class IngredientsController {
     );
   }
 
+  @ApiOkResponse({ description: 'Everything went ok.' })
+  @ApiException(() => [
+    IngredientNotFoundException,
+    UnauthorizedException,
+    BadRequestException
+  ])
   @Get(':id')
   findOne(@Param('id') @ValidMongoID() id: string) {
     return this.ingredientsService.findOne(id);
   }
 
+  @ApiOkResponse({ description: 'Update was successful' })
+  @ApiException(() => [
+    IngredientNotFoundException,
+    UnauthorizedException,
+    BadRequestException
+  ])
   @Patch(':id')
   update(
     @Param('id') @ValidMongoID() id: string,
@@ -57,6 +91,12 @@ export class IngredientsController {
     return this.ingredientsService.update(id, updateIngredientDto);
   }
 
+  @ApiOkResponse({ description: 'Deleted' })
+  @ApiException(() => [
+    IngredientNotFoundException,
+    UnauthorizedException,
+    BadRequestException
+  ])
   @Delete(':id')
   remove(@Param('id') @ValidMongoID() id: string) {
     return this.ingredientsService.remove(id);

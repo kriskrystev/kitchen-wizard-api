@@ -80,7 +80,7 @@ export class UsersService {
     documentsToSkip = 0,
     limitOfDocuments?: number,
     startId?: string
-  ): Promise<any> {
+  ): Promise<{ results: ReadUserDto[]; count: number }> {
     const query: FilterQuery<UserDocument> = {};
 
     if (startId) {
