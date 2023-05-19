@@ -17,6 +17,7 @@ import {
   ApiBearerAuth,
   ApiCreatedResponse,
   ApiOkResponse,
+  ApiParam,
   ApiTags
 } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
@@ -66,6 +67,10 @@ export class IngredientsController {
     );
   }
 
+  @ApiParam({
+    name: 'id',
+    description: 'The id of the ingredient you wish to find'
+  })
   @ApiOkResponse({ description: 'Everything went ok.' })
   @ApiException(() => [
     IngredientNotFoundException,
@@ -77,6 +82,10 @@ export class IngredientsController {
     return this.ingredientsService.findOne(id);
   }
 
+  @ApiParam({
+    name: 'id',
+    description: 'The id of the ingredient you wish to update'
+  })
   @ApiOkResponse({ description: 'Update was successful' })
   @ApiException(() => [
     IngredientNotFoundException,
@@ -91,6 +100,10 @@ export class IngredientsController {
     return this.ingredientsService.update(id, updateIngredientDto);
   }
 
+  @ApiParam({
+    name: 'id',
+    description: 'The id of the ingredient you wish to delete'
+  })
   @ApiOkResponse({ description: 'Deleted' })
   @ApiException(() => [
     IngredientNotFoundException,
