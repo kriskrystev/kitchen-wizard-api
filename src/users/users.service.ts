@@ -36,7 +36,8 @@ export class UsersService {
 
     const userEntity = await new this.userModel({
       ...createUserDto,
-      password
+      password,
+      roles: ['user']
     }).save();
 
     return this.classMapper.map(userEntity, User, ReadUserDto);

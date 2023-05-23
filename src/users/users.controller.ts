@@ -8,7 +8,9 @@ import {
   UseGuards
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { Roles } from '../auth/decorators/roles.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
 import { MailService } from '../mail/mail.service';
 import { PaginationParams } from '../utils/pagination/pagination-params';
 import { RequestWithUser } from '../utils/request-with-user';
@@ -34,6 +36,8 @@ export class UsersController {
   }
 
   @Get()
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Roles('admin')
   async getAll(@Query() { skip, limit, startId }: PaginationParams) {
     return await this.usersService.findAll(skip, limit, startId);
   }
