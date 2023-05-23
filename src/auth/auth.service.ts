@@ -3,8 +3,8 @@ import { JwtService } from '@nestjs/jwt';
 import { User } from '../users/schema/user.schema';
 import { UsersService } from '../users/users.service';
 import { comparePasswords } from '../utils/bcrypt';
-import { JwtLoginResponse } from './models/jwt-login-response';
-import { JwtSignaturePayload } from './models/jwt-signature-payload';
+import { JwtLoginResponse } from './dto/jwt-login-response';
+import { JwtSignaturePayload } from './dto/jwt-signature-payload';
 
 @Injectable()
 export class AuthService {

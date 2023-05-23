@@ -15,10 +15,10 @@ async function bootstrap() {
     .setTitle('Recipes API')
     .setDescription('This is a simple and straightforward recipes API')
     .setVersion('1.0')
+    .addTag('authentication')
     .addTag('users')
     .addTag('recipes')
     .addTag('ingredients')
-    .addTag('authentication')
     .addBearerAuth({
       type: 'http',
       scheme: 'bearer',
